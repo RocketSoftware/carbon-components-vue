@@ -1,10 +1,33 @@
 # Changelog
 
-## 2.14.0-canary.x (Sept 20, 2019)
+## 2.15.0-canary.x (Sept 28, 2019)
 
 ### Feat
 
-- Add optional customisable labels/text where they previously were fixed.
+- Add v-model for date picker
+- Add up down aria labels for number input
+- Update to Carbon 10.6
+- Add expand all to data table
+
+### Fix
+
+### Chore
+
+- Tidy up knobs
+- Work on tests
+
+## 2.14.0 (Sept 25, 2019)
+
+### Feat
+
+- Add various optional customisable labels/text where they previously were fixed.
+- Allow primary button to be disabled on the modal dialog
+- Add disabled property to CvLink and other components with links
+
+### Fixes
+
+- Tidy up popups (CvOverflowMenu and CvInteractiveTooltip) on beforeDestroy event
+- To date activation in date picker range mode (was activating from on icon click)
 
 ## 2.13.0 (Sept 20, 2019)
 

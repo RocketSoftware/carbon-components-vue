@@ -1,7 +1,14 @@
 <template>
   <button
     class="cv-button"
-    :class="['bx--btn', 'bx--btn--' + kind.toLowerCase(), { 'bx--btn--sm': small }]"
+    :class="[
+      'bx--btn',
+      'bx--btn--' + kind.toLowerCase(),
+      {
+        'bx--btn--sm': size === 'small' || (size === undefined && small),
+        'bx--btn--field': size === 'field',
+      },
+    ]"
     v-on="$listeners"
     role="button"
   >
@@ -15,37 +22,10 @@
 </template>
 
 <script>
+import buttonMixin from './button-mixin';
+
 export default {
   name: 'CvButton',
-  props: {
-    icon: {
-      type: [String, Object],
-      default: null,
-      validator(val) {
-        if (!val || typeof val === 'string') {
-          return true;
-        }
-        return val.render !== null;
-      },
-    },
-    iconHref: {
-      type: String,
-      default: null,
-      validator(val) {
-        if (process.env.NODE_ENV === 'development') {
-          if (val !== null) {
-            console.warn('CvButton: iconHref deprecated in favour of icon to be removed in future versions.');
-          }
-        }
-        return true;
-      },
-    },
-    kind: {
-      type: String,
-      default: 'primary',
-      validator: val => ['primary', 'secondary', 'tertiary', 'ghost', 'danger', 'danger--primary'].includes(val),
-    },
-    small: { type: Boolean, default: false },
-  },
+  mixins: [buttonMixin],
 };
 </script>
