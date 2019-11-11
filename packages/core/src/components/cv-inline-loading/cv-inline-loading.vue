@@ -12,8 +12,8 @@
 <script>
 import { STATES } from './consts';
 import CvLoading from '../cv-loading/cv-loading';
-import Error20 from '@carbon/icons-vue/lib/error/20';
-import CheckmarkFilled16 from '@carbon/icons-vue/lib/checkmark--filled/16';
+import Error20 from '@rocketsoftware/icons-vue/lib/error/20';
+import CheckmarkFilled16 from '@rocketsoftware/icons-vue/lib/checkmark--filled/16';
 
 export default {
   name: 'CvInlineLoading',

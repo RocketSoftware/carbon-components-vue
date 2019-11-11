@@ -1,6 +1,6 @@
 import { shallowMount as shallow, mount } from '@vue/test-utils';
 import { testComponent, testInstance, events } from './_helpers';
-import { CvAccordion, CvAccordionItem, CvAccordionSkeleton } from '@/components/cv-Accordion';
+import { CvAccordion, CvAccordionItem, CvAccordionSkeleton } from '@/components/cv-accordion';
 import { settings } from '@rocketsoftware/carbon-components';
 
 const { prefix } = settings;
