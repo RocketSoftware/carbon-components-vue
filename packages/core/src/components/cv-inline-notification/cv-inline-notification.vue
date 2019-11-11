@@ -2,7 +2,12 @@
   <div
     data-notification
     class="cv-inline-notification bx--inline-notification"
-    :class="`bx--inline-notification--${kind.toLowerCase()}`"
+    :class="[
+      `bx--inline-notification--${kind.toLowerCase()}`,
+      {
+        'bx--inline-notification--low-contrast': lowContrast,
+      },
+    ]"
     v-on="$listeners"
     :role="isAlert ? 'alert' : false"
     :aria-live="!isAlert ? 'polite' : false"
@@ -11,9 +16,17 @@
       <component :is="icon" class="bx--inline-notification__icon" />
       <div class="bx--inline-notification__text-wrapper">
         <p class="bx--inline-notification__title">{{ title }}</p>
-        <p class="bx--inline-notification__subtitle">{{ subTitle }}.</p>
+        <p class="bx--inline-notification__subtitle">{{ subTitle }}</p>
       </div>
     </div>
+    <button
+      v-if="actionLabel"
+      @click="$emit('action')"
+      class="bx--inline-notification__action-button bx--btn bx--btn--sm bx--btn--ghost"
+      type="button"
+    >
+      {{ actionLabel }}
+    </button>
     <button
       type="button"
       :aria-label="closeAriaLabel"
@@ -38,12 +51,14 @@ export default {
   components: { Close16 },
   mixins: [notificationMixin],
   props: {
-    closeAriaLabel: { type: String, default: 'Clear filter' },
+    actionLabel: { type: String, default: '' },
+    closeAriaLabel: { type: String, default: 'Dismiss notification' },
     kind: {
       type: String,
       default: 'info',
       validator: val => ['error', 'info', 'warning', 'success'].includes(val),
     },
+    lowContrast: Boolean,
   },
   computed: {
     icon() {

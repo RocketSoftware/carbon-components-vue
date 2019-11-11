@@ -51,7 +51,7 @@ import { CvList, CvListItem } from './components/cv-list';
 import { CvLoading } from './components/cv-loading';
 import { CvModal } from './components/cv-modal';
 import { CvMultiSelect } from './components/cv-multi-select';
-import { CvNumberInput } from './components/cv-number-input';
+import { CvNumberInput, CvNumberInputSkeleton } from './components/cv-number-input';
 import { CvOverflowMenu, CvOverflowMenuItem } from './components/cv-overflow-menu';
 import { CvPagination } from './components/cv-pagination';
 import { CvProgress, CvProgressStep } from './components/cv-progress';
@@ -66,7 +66,7 @@ import {
   CvStructuredListItem,
   CvStructuredList,
 } from './components/cv-structured-list';
-import { CvTabs, CvTab } from './components/cv-tabs';
+import { CvTabs, CvTab, CvTabsSkeleton } from './components/cv-tabs';
 import { CvTag, CvTagSkeleton } from './components/cv-tag';
 import { CvTextArea } from './components/cv-text-area';
 import { CvTextInput } from './components/cv-text-input';
@@ -118,7 +118,7 @@ export { CvList, CvListItem };
 export { CvLoading };
 export { CvModal };
 export { CvMultiSelect };
-export { CvNumberInput };
+export { CvNumberInput, CvNumberInputSkeleton };
 export { CvOverflowMenu, CvOverflowMenuItem };
 export { CvPagination };
 export { CvProgress, CvProgressStep };
@@ -128,7 +128,7 @@ export { CvSelect, CvSelectOption, CvSelectOptgroup };
 export { CvSkeletonText };
 export { CvSlider, CvSliderSkeleton };
 export { CvStructuredList, CvStructuredListItem, CvStructuredListHeading, CvStructuredListData };
-export { CvTab, CvTabs };
+export { CvTab, CvTabs, CvTabsSkeleton };
 export { CvTag, CvTagSkeleton };
 export { CvTextArea };
 export { CvTextInput };

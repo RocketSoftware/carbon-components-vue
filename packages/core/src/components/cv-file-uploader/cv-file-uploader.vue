@@ -5,25 +5,35 @@
     <div class="bx--file" data-file>
       <label
         :for="uid"
-        class="bx--file--btn bx--btn bx--btn--primary"
+        class="bx--file-browse-btn"
         role="button"
         tabindex="0"
         @keydown.enter.prevent="onShow()"
         @keydown.space.prevent
         @keyup.space.prevent="onShow()"
-        >{{ buttonLabel }}</label
       >
-      <input
-        v-bind="$attrs"
-        type="file"
-        class="bx--file-input"
-        :id="uid"
-        data-file-uploader
-        data-target="[data-file-container]"
-        v-on="inputListeners"
-        ref="file-input"
-        tabindex="-1"
-      />
+        <div
+          data-file-drop-container
+          class="bx--file__drop-container"
+          :class="{ 'bx--file__drop-container--drag-over': allowDrop }"
+          @dragover="onDragEvent"
+          @dragleave="onDragEvent"
+          @drop="onDragEvent"
+        >
+          <slot name="drop-target">{{ internalDropTargetLabel }}</slot>
+          <input
+            v-bind="$attrs"
+            type="file"
+            class="bx--file-input"
+            :id="uid"
+            data-file-uploader
+            data-target="[data-file-container]"
+            v-on="inputListeners"
+            ref="file-input"
+          />
+        </div>
+      </label>
+
       <div data-file-container class="bx--file-container">
         <div
           v-for="(file, index) in internalFiles"
@@ -35,27 +45,34 @@
             class="bx--file__selected-file bx--file__selected-file--invalid"
           >
             <p class="bx--file-filename">{{ file.file.name }}</p>
-            <span :data-for="uid" class="bx--file__state-container" :data-test="file.state">
+
+            <span :data-for="uid" class="bx--file__state-container" :data-test="file.state" :style="stateStyleOverides">
               <div v-if="file.state === 'uploading'" class="bx--inline-loading__animation">
-                <cv-inline-loading active loading-text loaded-text />
+                <div data-inline-loading-spinner class="bx--loading bx--loading--small">
+                  <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+                    <circle class="bx--loading__background" cx="0" cy="0" r="37.5" />
+                    <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5" />
+                  </svg>
+                </div>
               </div>
               <CheckmarkFilled16 v-if="file.state === 'complete'" class="bx--file-complete" />
               <WarningFilled16 v-if="isInvalid(index)" class="bx--file--invalid" />
-              <Close16
-                v-if="removable"
+              <button
+                type="button"
                 class="bx--file-close"
-                :tabindex="'1'"
-                role="button"
+                v-if="removable"
                 :alt="removeAriaLabel"
                 :arial-label="removeAriaLabel"
                 @click="remove(index)"
-                @keydown.enter.prevent="remove(index)"
-                @keydown.space.prevent
-                @keyup.space.prevent="remove(index)"
-              />
+              >
+                <Close16 />
+              </button>
             </span>
+            <div v-if="isInvalid(index)" class="bx--form-requirement">
+              <div class="bx--form-requirement__title">{{ file.invalidMessageTitle || 'Invalid file' }}</div>
+              <p class="bx--form-requirement__supplement">{{ file.invalidMessage }}</p>
+            </div>
           </cv-wrapper>
-          <div v-if="isInvalid" class="bx--form-requirement">{{ file.invalidMessage }}</div>
         </div>
       </div>
     </div>
@@ -65,7 +82,6 @@
 <script>
 import uidMixin from '../../mixins/uid-mixin';
 import CvFormItem from '../cv-form/cv-form-item';
-import CvInlineLoading from '../cv-inline-loading/cv-inline-loading';
 import CheckmarkFilled16 from '@rocketsoftware/icons-vue/es/checkmark--filled/16';
 import WarningFilled16 from '@rocketsoftware/icons-vue/es/warning--filled/16';
 import Close16 from '@rocketsoftware/icons-vue/es/close/16';
@@ -81,7 +97,7 @@ const CONSTS = {
 
 export default {
   name: 'CvFileUploader',
-  components: { CvFormItem, CvInlineLoading, CheckmarkFilled16, WarningFilled16, Close16, CvWrapper },
+  components: { CvFormItem, CheckmarkFilled16, WarningFilled16, Close16, CvWrapper },
   mixins: [uidMixin],
   inheritAttrs: false,
   props: {
@@ -91,8 +107,18 @@ export default {
     helperText: String,
     initialStateUploading: Boolean,
     removable: Boolean,
-    buttonLabel: { type: String, default: 'Select file' },
-    removeAriaLabel: { type: String, default: 'Remove file' },
+    buttonLabel: {
+      type: String,
+      default: undefined,
+      validator: val => {
+        if (val !== undefined && process.env.NODE_ENV === 'development') {
+          console.warn('CvFileUploader: button-label prop deprecated in favour of drop-target-label');
+        }
+        return true;
+      },
+    },
+    dropTargetLabel: { type: String, default: undefined },
+    removeAriaLabel: { type: String, default: 'Remove selected file' },
   },
   model: {
     prop: 'files',
@@ -104,6 +130,7 @@ export default {
   data() {
     return {
       internalFiles: [],
+      allowDrop: false,
     };
   },
   mounted() {
@@ -130,24 +157,35 @@ export default {
         return result;
       };
     },
+    internalDropTargetLabel() {
+      return this.dropTargetLabel || this.buttonLabel || 'Drag and drop files here or upload';
+    },
+    stateStyleOverides() {
+      // <style carbon tweaks - DO NOT USE STYLE TAG as it causes SSR issues
+      return { display: 'inline-flex', alignItems: 'center' };
+    },
   },
   methods: {
     remove(index) {
       this.internalFiles.splice(index, 1);
       this.$emit('change', this.internalFiles);
     },
-    onChange(ev) {
-      if (ev.target.files.length !== 0 && this.clearOnReselect) {
-        this.internalFiles = [];
-      }
-      for (const file of ev.target.files) {
+    addFiles(files) {
+      for (const file of files) {
         this.internalFiles.push({
           state: this.initialStateUploading ? CONSTS.STATES.UPLOADING : CONSTS.STATES.NONE,
           file,
+          invalidMessageTitle: '',
           invalidMessage: '',
         });
       }
       this.$emit('change', this.internalFiles);
+    },
+    onChange(ev) {
+      if (ev.target.files.length !== 0 && this.clearOnReselect) {
+        this.internalFiles = [];
+      }
+      this.addFiles(ev.target.files);
     },
     onShow() {
       this.$refs['file-input'].click();
@@ -163,6 +201,36 @@ export default {
     },
     setInvalidMessage(index, message) {
       this.internalFiles[index].invalidMessage = message;
+    },
+    onDragEvent(evt) {
+      // NOTE: Validation of dragged files is not currently done.
+      // It may be possible to do this here or defer to the caller.
+      // It is certainly possible for the user to remove files after they are dropped.
+
+      if (Array.prototype.indexOf.call(evt.dataTransfer.types, 'Files') >= 0) {
+        if (evt.type === 'dragover') {
+          evt.preventDefault();
+          const dropEffect = 'copy';
+          if (Array.isArray(evt.dataTransfer.types)) {
+            try {
+              // IE11 throws a "permission denied" error accessing `.effectAllowed`
+              evt.dataTransfer.effectAllowed = dropEffect;
+            } catch (e) {
+              // ignore
+            }
+          }
+          evt.dataTransfer.dropEffect = dropEffect;
+          this.allowDrop = true;
+        }
+        if (evt.type === 'dragleave') {
+          this.allowDrop = false;
+        }
+        if (evt.type === 'drop') {
+          evt.preventDefault();
+          this.addFiles(evt.dataTransfer.files);
+          this.allowDrop = false;
+        }
+      }
     },
   },
 };
