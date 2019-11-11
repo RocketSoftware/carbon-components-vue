@@ -64,10 +64,8 @@ export default {
       type: Boolean,
       default: undefined,
       validator(val) {
-        if (process.env.NODE_ENV === 'development') {
-          if (val !== null) {
-            console.warn('The larger search input is now the default.');
-          }
+        if (val !== undefined && process.env.NODE_ENV === 'development') {
+          console.warn('The larger search input is now the default.');
         }
         return true;
       },
@@ -145,10 +143,3 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.cv-search {
-  .bx--search-magnifier {
-    pointer-events: none;
-  }
-}
-</style>

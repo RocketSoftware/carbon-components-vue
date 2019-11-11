@@ -14,10 +14,8 @@ export default {
       type: String,
       default: undefined,
       validator(val) {
-        if (process.env.NODE_ENV === 'development') {
-          if (val !== undefined) {
-            console.warn('CvButton: iconHref deprecated in favour of icon to be removed in future versions.');
-          }
+        if (val !== undefined && process.env.NODE_ENV === 'development') {
+          console.warn('CvButton: iconHref deprecated in favour of icon to be removed in future versions.');
         }
         return true;
       },
@@ -31,14 +29,22 @@ export default {
       type: Boolean,
       default: false,
       validator(val) {
-        if (process.env.NODE_ENV === 'development') {
-          if (val !== undefined) {
-            console.warn('CvButton: small deprecated in favour of size.');
-          }
+        if (val !== undefined && process.env.NODE_ENV === 'development') {
+          console.warn('CvButton: small deprecated in favour of size.');
         }
         return true;
       },
     },
     size: { type: String, default: undefined, validator: val => ['', 'field', 'small'].includes(val) },
+  },
+  computed: {
+    // Bind listeners at the component level to the embedded input element and
+    // add our own input listener to service the v-model. See:
+    // https://vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model
+    inputListeners() {
+      return Object.assign({}, this.$listeners, {
+        click: event => this.$emit('click', event),
+      });
+    },
   },
 };

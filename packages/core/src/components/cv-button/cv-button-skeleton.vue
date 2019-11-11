@@ -18,15 +18,13 @@ export default {
       type: Boolean,
       default: false,
       validator(val) {
-        if (process.env.NODE_ENV === 'development') {
-          if (val !== undefined) {
-            console.warn('CvButton: small deprecated in favour of size.');
-          }
+        if (val !== undefined && process.env.NODE_ENV === 'development') {
+          console.warn('CvButton: small deprecated in favour of size.');
         }
         return true;
       },
     },
-    size: { type: String, default: undefined, validator: val => ['', 'field', 'small'] },
+    size: { type: String, default: undefined, validator: val => ['', 'field', 'small'].includes(val) },
   },
 };
 </script>

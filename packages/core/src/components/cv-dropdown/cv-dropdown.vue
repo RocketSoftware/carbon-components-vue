@@ -17,18 +17,25 @@
 
 <template>
   <div :class="{ 'bx--form-item': formItem }">
-    <div class="bx--dropdown__wrapper" :class="{ 'bx--dropdown__wrapper--inline': inline, 'cv-dropdown': !formItem }">
-      <label v-if="label" class="bx--label" :class="{ 'bx--label--disabled': $attrs.disabled }">{{ label }}</label>
+    <div
+      class="bx--dropdown__wrapper"
+      :class="{ 'bx--dropdown__wrapper--inline': inline, 'cv-dropdown': !formItem }"
+      :style="wrapperStyleOverride"
+    >
+      <span v-if="label" :id="`${uid}-label`" class="bx--label" :class="{ 'bx--label--disabled': disabled }">
+        {{ label }}
+      </span>
 
       <div
         v-if="!inline && isHelper"
         class="bx--form__helper-text"
-        :class="{ 'bx--form__helper-text--disabled': $attrs.disabled }"
+        :class="{ 'bx--form__helper-text--disabled': disabled }"
+        :aria-disabled="disabled"
       >
         <slot name="helper-text">{{ helperText }}</slot>
       </div>
 
-      <ul
+      <div
         data-dropdown
         :data-value="internalValue"
         :data-invalid="isInvalid"
@@ -39,7 +46,7 @@
           'bx--dropdown--up': up,
           'bx--dropdown--open': open,
           'bx--dropdown--invalid': isInvalid,
-          'bx--dropdown--disabled': $attrs.disabled,
+          'bx--dropdown--disabled': disabled,
           'bx--dropdown--inline': inline,
         }"
         v-bind="$attrs"
@@ -49,24 +56,33 @@
         @keydown.esc.prevent="onEsc"
         @click="onClick"
       >
-        <WarningFilled16 v-if="isInvalid" class="bx--dropdown__invalid-icon" />
-        <li v-if="inline" class="bx--dropdown-text" ref="valueContent">
-          <span class="bx--dropdown-text__inner">{{ placeholder }}</span>
-          <chevron-down-16 class="cv-dropdown__arrow bx--dropdown__arrow" />
-        </li>
-        <template v-else>
-          <li class="bx--dropdown-text" ref="valueContent">{{ placeholder }}</li>
-          <li class="bx--dropdown__arrow-container">
-            <chevron-down-16 class="cv-dropdown__arrow bx--dropdown__arrow" />
-          </li>
-        </template>
-
-        <li>
-          <ul class="bx--dropdown-list">
-            <slot></slot>
-          </ul>
-        </li>
-      </ul>
+        <button
+          class="bx--dropdown-text"
+          aria-haspopup="true"
+          :aria-expanded="open"
+          :aria-controls="`${uid}-menu`"
+          :aria-labelledby="`${uid}-label ${uid}-value`"
+          type="button"
+        >
+          <WarningFilled16 v-if="isInvalid && inline" class="bx--dropdown__invalid-icon" />
+          <span class="bx--dropdown-text__inner" :id="`${uid}-value`" ref="valueContent">{{ placeholder }}</span>
+          <span class="bx--dropdown__arrow-container">
+            <span class="bx--dropdown__arrow" :style="chevronStyleOveride">
+              <chevron-down-glyph />
+            </span>
+          </span>
+        </button>
+        <ul
+          class="bx--dropdown-list"
+          :id="`${uid}-menu`"
+          role="menu"
+          :aria-hidden="!open"
+          wh-menu-anchor="left"
+          :aria-labelledby="`${uid}-label`"
+        >
+          <slot></slot>
+        </ul>
+      </div>
       <div v-if="isInvalid && inline" class="bx--form-requirement">
         <slot name="invalid-message">{{ invalidMessage }}</slot>
       </div>
@@ -79,15 +95,17 @@
 
 <script>
 import themeMixin from '../../mixins/theme-mixin';
+import uidMixin from '../../mixins/uid-mixin';
 import WarningFilled16 from '@rocketsoftware/icons-vue/es/warning--filled/16';
-import ChevronDown16 from '@rocketsoftware/icons-vue/es/chevron--down/16';
+import ChevronDownGlyph from '@rocketsoftware/icons-vue/es/chevron--down';
 
 export default {
   name: 'CvDropdown',
   inheritAttrs: false,
-  mixins: [themeMixin],
-  components: { WarningFilled16, ChevronDown16 },
+  mixins: [themeMixin, uidMixin],
+  components: { WarningFilled16, ChevronDownGlyph },
   props: {
+    disabled: Boolean,
     formItem: { type: Boolean, default: true },
     inline: Boolean,
     invalidMessage: { type: String, default: undefined },
@@ -141,21 +159,42 @@ export default {
       },
       set(val) {
         const childItems = this.dropdownItems();
+        let selectedChild;
         for (let index in childItems) {
           let child = childItems[index];
           let selected = child.value === val;
           child.internalSelected = selected;
 
           if (selected) {
-            this.$refs.valueContent.innerHTML = child.internalContent;
+            selectedChild = child;
           }
         }
+        if (selectedChild) {
+          this.$refs.valueContent.innerHTML = selectedChild.internalContent;
+        } else {
+          this.$refs.valueContent.innerHTML = this.placeholder;
+        }
+
         if (this.dataValue !== val) {
           // only raise event on change
           this.dataValue = val;
           this.$emit('change', this.dataValue);
         }
       },
+    },
+    chevronStyleOveride() {
+      // This allows the same chevron to be used in dropdown and tabs
+      return {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '16px',
+        width: '16px',
+      };
+    },
+    wrapperStyleOverride() {
+      // ensures correct width when used inside tabs component
+      return { width: '100%' };
     },
   },
   methods: {
@@ -171,7 +210,7 @@ export default {
     },
     onCvBeforeDestroy(srcComponent) {
       if (srcComponent.value === this.internalValue) {
-        this.internalValue = null;
+        this.dataValue = null;
       }
     },
     dropdownItems() {
@@ -225,16 +264,20 @@ export default {
       this.$el.focus();
     },
     onClick(ev) {
-      this.open = !this.open;
-      if (!this.open) {
-        this.$el.focus();
-      }
+      if (this.disabled) {
+        ev.preventDefault();
+      } else {
+        this.open = !this.open;
+        if (!this.open) {
+          this.$el.focus();
+        }
 
-      if (ev.target.classList.contains('bx--dropdown-link')) {
-        const targetItemEl = ev.target.parentNode;
-        const newValue = targetItemEl.getAttribute('data-value');
+        if (ev.target.classList.contains('bx--dropdown-link')) {
+          const targetItemEl = ev.target.parentNode;
+          const newValue = targetItemEl.getAttribute('data-value');
 
-        this.internalValue = newValue;
+          this.internalValue = newValue;
+        }
       }
     },
   },
