@@ -34,7 +34,7 @@
           >
             <slot></slot>
           </select>
-          <chevron-down-glyph class="bx--select__arrow" />
+          <chevron-down-16 class="bx--select__arrow" />
           <warning-filled-16 v-if="isInvalid" class="bx--select__invalid-icon" />
         </div>
 
@@ -56,13 +56,18 @@
 import uidMixin from '../../mixins/uid-mixin';
 import themeMixin from '../../mixins/theme-mixin';
 import CvWrapper from '../cv-wrapper/_cv-wrapper';
+<<<<<<< HEAD
 import ChevronDownGlyph from '@rocketsoftware/icons-vue/es/chevron--down/index';
 import WarningFilled16 from '@rocketsoftware/icons-vue/es/warning--filled/16';
+=======
+import ChevronDown16 from '@carbon/icons-vue/es/chevron--down/16';
+import WarningFilled16 from '@carbon/icons-vue/es/warning--filled/16';
+>>>>>>> upstream/master
 
 export default {
   name: 'CvSelect',
   inheritAttrs: false,
-  components: { CvWrapper, ChevronDownGlyph, WarningFilled16 },
+  components: { CvWrapper, ChevronDown16, WarningFilled16 },
   mixins: [uidMixin, themeMixin],
   props: {
     inline: Boolean,
@@ -92,7 +97,11 @@ export default {
     delete this.$attrs.multiple;
   },
   data() {
-    return { dataValue: undefined };
+    return {
+      dataValue: undefined,
+      isHelper: false,
+      isInvalid: false,
+    };
   },
   mounted() {
     // this is needed to ensure selected for an option when no value is supplied
@@ -104,6 +113,10 @@ export default {
         }
       }
     }
+    this.checkSlots();
+  },
+  beforeUpdate() {
+    this.checkSlots();
   },
   watch: {
     value() {
@@ -118,6 +131,10 @@ export default {
       }
     },
   },
+  model: {
+    prop: 'value',
+    event: 'change',
+  },
   computed: {
     // Bind listeners at the component level to the embedded input element and
     // add our own input listener to service the v-model. See:
@@ -126,16 +143,18 @@ export default {
       return {
         ...this.$listeners,
         input: event => this.$emit('input', event.target.value),
+        change: event => this.$emit('change', event.target.value), // use change event for ie11 compatibility
       };
-    },
-    isInvalid() {
-      return this.$slots['invalid-message'] !== undefined || (this.invalidMessage && this.invalidMessage.length);
-    },
-    isHelper() {
-      return this.$slots['helper-text'] !== undefined || (this.helperText && this.helperText.length);
     },
     internalValue() {
       return this.dataValue ? this.dataValue : this.value;
+    },
+  },
+  methods: {
+    checkSlots() {
+      // NOTE: this.$slots is not reactive so needs to be managed on beforeUpdate
+      this.isInvalid = !!(this.$slots['invalid-message'] || (this.invalidMessage && this.invalidMessage.length));
+      this.isHelper = !!(this.$slots['helper-text'] || (this.helperText && this.helperText.length));
     },
   },
 };

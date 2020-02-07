@@ -1,7 +1,7 @@
 <template>
   <header class="cv-header bx--header" role="banner" data-header>
     <slot />
-    <div v-if="$slots['header-global']" class="bx--header__global">
+    <div v-if="hasGlobalHeader" class="bx--header__global">
       <slot name="header-global" />
     </div>
     <slot name="left-panels" />
@@ -26,7 +26,15 @@ export default {
     return {
       panelControllers: [],
       panels: [],
+      hasGlobalHeader: false,
     };
+  },
+  mounted() {
+    // NOTE: this.$slots is not reactive so needs to be managed on beforeUpdate
+    this.hasGlobalHeader = !!this.$slots['header-global'];
+  },
+  beforeUpdate() {
+    this.hasGlobalHeader = !!this.$slots['header-global'];
   },
   computed: {
     isCvHeader() {
@@ -34,8 +42,23 @@ export default {
     },
   },
   methods: {
+    hasRail(_ctrl, _panel) {
+      let panel = _panel;
+      let ctrl = _ctrl;
+      if (ctrl) {
+        panel = this.panels.find(item => item.id === ctrl.ariaControls);
+      } else {
+        if (panel) {
+          ctrl = this.panelControllers.find(item => item.ariaControls === panel.id);
+        }
+      }
+      if (ctrl) {
+        ctrl.hasRail = !!(panel && ctrl) && panel.rail;
+      }
+    },
     onCvPanelControlMounted(srcComponent) {
       this.panelControllers.push(srcComponent);
+      this.hasRail(srcComponent);
     },
     onCvPanelControlBeforeDestroy(srcComponent) {
       const index = this.panelControllers.findIndex(item => item.id === srcComponent.id);
@@ -62,12 +85,15 @@ export default {
     onCvPanelControlFocusout(srcComponent, srcEvent) {
       const found = this.panels.find(item => item.id === srcComponent.ariaControls);
 
-      if (found && found.$el !== srcEvent.relatedTarget && !found.$el.contains(srcEvent.relatedTarget)) {
+      if (found && !found.rail && found.$el !== srcEvent.relatedTarget && !found.$el.contains(srcEvent.relatedTarget)) {
+        // close when not a rail
         this.onCvPanelControlToggle(srcComponent, false);
       }
     },
     onCvPanelMounted(srcComponent) {
       this.panels.push(srcComponent);
+      srcComponent.headerEmbedded = true;
+      this.hasRail(undefined, srcComponent);
     },
     onCvPanelBeforeDestroy(srcComponent) {
       const index = this.panels.findIndex(item => item.id === srcComponent.id);

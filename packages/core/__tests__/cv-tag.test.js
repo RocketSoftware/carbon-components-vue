@@ -1,9 +1,9 @@
 import { shallowMount as shallow, mount } from '@vue/test-utils';
 import { testComponent, testInstance } from './_helpers';
 import { CvTag, CvTagSkeleton } from '@/components/cv-tag';
-import { settings } from '@rocketsoftware/carbon-components';
+// import { settings as carbonSettings } from '@rocketsoftware/carbon-components';
 
-const { prefix } = settings;
+// const carbonPrefix = carbonSettings.prefix;
 
 describe('CvTag', () => {
   // ***************

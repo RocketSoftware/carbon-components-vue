@@ -1,30 +1,18 @@
 <template>
-  <button
-    disabled
-    class="bx--btn bx--skeleton"
-    :class="{
-      'bx--btn--sm': size === 'small' || (size === undefined && small),
-      'bx--btn--field': size === 'field',
-    }"
-    type="button"
-  ></button>
+  <button disabled :class="buttonClasses" type="button"></button>
 </template>
 
 <script>
+import carbonPrefixMixin from '../../mixins/carbon-prefix-mixin';
+import buttonMixin from './button-mixin';
+
 export default {
   name: 'CvButtonSkeleton',
-  props: {
-    small: {
-      type: Boolean,
-      default: false,
-      validator(val) {
-        if (val !== undefined && process.env.NODE_ENV === 'development') {
-          console.warn('CvButton: small deprecated in favour of size.');
-        }
-        return true;
-      },
+  mixins: [buttonMixin, carbonPrefixMixin],
+  computed: {
+    buttonClasses() {
+      return this.buttonClassOpts({ skeleton: true });
     },
-    size: { type: String, default: undefined, validator: val => ['', 'field', 'small'].includes(val) },
   },
 };
 </script>

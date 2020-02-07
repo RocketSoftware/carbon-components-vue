@@ -81,6 +81,28 @@ describe('CvNumberInput', () => {
     expect(wrapper.html()).toMatchSnapshot();
   });
 
+  it('should match snapshot with min, max and step as Strings', () => {
+    const formItem = false;
+    const id = '1';
+    const value = '15';
+    const min = '-10';
+    const max = '10';
+    const step = '2';
+    const wrapper = shallow(CvNumberInput, { propsData: { formItem, id, value, min, max, step } });
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
+  it('should match snapshot with optional min, max and step as numbers', () => {
+    const formItem = false;
+    const id = '1';
+    const value = 15;
+    const min = -10;
+    const max = 10;
+    const step = 2;
+    const wrapper = shallow(CvNumberInput, { propsData: { formItem, id, value, min, max, step } });
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
   it('should match snapshot when light theme', () => {
     const formItem = false;
     const id = '1';
@@ -92,32 +114,40 @@ describe('CvNumberInput', () => {
   it('should match snapshot when invalid-message slot is provided', () => {
     const id = '1';
     const value = 5;
-    const invalidMessage = 'test';
-    const wrapper = shallow(
-      CvNumberInput,
-      { propsData: { id, value, invalidMessage } },
-      {
-        slots: {
-          'invalid-message': '<div class="fake-slot">my invalid message</div>',
-        },
-      }
-    );
+    const propsData = { id, value };
+    const wrapper = shallow(CvNumberInput, {
+      slots: {
+        'invalid-message': '<div class="fake-slot">my invalid message</div>',
+      },
+      propsData,
+    });
     expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('should match snapshot when helper-text slot is provided', () => {
     const id = '1';
     const value = 5;
-    const helperText = 'test';
-    const wrapper = shallow(
-      CvNumberInput,
-      { propsData: { id, value, helperText } },
-      {
-        slots: {
-          'helper-text': '<div class="fake-slot">my helper text</div>',
-        },
-      }
-    );
+    const propsData = { id, value };
+    const wrapper = shallow(CvNumberInput, {
+      slots: {
+        'helper-text': '<div class="fake-slot">my helper text</div>',
+      },
+      propsData,
+    });
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+
+  it('should match snapshot when mobile variant requested', () => {
+    const id = '1';
+    const value = 5;
+    const mobile = true;
+    const propsData = { id, value, mobile };
+    const wrapper = shallow(CvNumberInput, {
+      slots: {
+        'helper-text': '<div class="fake-slot">my helper text</div>',
+      },
+      propsData,
+    });
     expect(wrapper.html()).toMatchSnapshot();
   });
 
@@ -148,13 +178,13 @@ describe('CvNumberInput', () => {
 
   it('should emit String when value prop is String', () => {
     const id = '1';
-    const value = '5';
+    const value = '555';
     const wrapper = shallow(CvNumberInput, { propsData: { id, value } });
     wrapper.find('.up-icon').trigger('click');
     expect(wrapper.emitted().input[0]).toEqual([(parseInt(value) + 1).toString()]);
   });
 
-  it('should emit value encreased by 1 on doUp', () => {
+  it('should emit value increased by 1 on doUp', () => {
     const id = '1';
     const value = 2;
     const wrapper = shallow(CvNumberInput, { propsData: { id, value } });
@@ -168,6 +198,70 @@ describe('CvNumberInput', () => {
     const wrapper = shallow(CvNumberInput, { propsData: { id, value } });
     wrapper.find('.down-icon').trigger('click');
     expect(wrapper.emitted().input[0]).toEqual([value - 1]);
+  });
+
+  // the next four tests are commented out until JSDOM correctly
+  // implements decimal floating point for <input> elements
+  // see https://github.com/jsdom/jsdom/issues/2823
+
+  // it('should emit value increased by 0.3 on doUp', () => {
+  //   const id = '1';
+  //   const value = 0;
+  //   const step = 0.3;
+  //   const wrapper = shallow(CvNumberInput, { propsData: { id, value, step } });
+  //   wrapper.find('.up-icon').trigger('click');
+  //   expect(wrapper.emitted().input[0]).toEqual([value + 0.3]);
+  // });
+
+  // it('should emit value decreased by 0.3 on doDown', () => {
+  //   const id = '1';
+  //   const value = 1.2;
+  //   const step = 0.3;
+  //   const wrapper = shallow(CvNumberInput, { propsData: { id, value, step } });
+  //   wrapper.find('.down-icon').trigger('click');
+  //   expect(wrapper.emitted().input[0]).toEqual([0.9]);
+  // });
+
+  // it('should emit value snapped to next higher value', () => {
+  //   const id = '1';
+  //   const value = 0.5;
+  //   const step = 0.3;
+  //   const wrapper = shallow(CvNumberInput, { propsData: { id, value, step } });
+  //   wrapper.find('.up-icon').trigger('click');
+  //   expect(wrapper.emitted().input[0]).toEqual([0.6]);
+  // });
+
+  // it('should emit value snapped to next lower value', () => {
+  //   const id = '1';
+  //   const value = 0.5;
+  //   const step = 0.3;
+  //   const wrapper = shallow(CvNumberInput, { propsData: { id, step, value } });
+  //   wrapper.find('.down-icon').trigger('click');
+  //   expect(wrapper.emitted().input[0]).toEqual([0.3]);
+  // });
+
+  it('should respect max value', () => {
+    const id = '1';
+    const value = 9;
+    const step = 2;
+    const max = 10;
+    const wrapper = shallow(CvNumberInput, { propsData: { id, step, value, max } });
+    wrapper.find('.up-icon').trigger('click');
+    wrapper.find('.up-icon').trigger('click');
+    expect(wrapper.emitted().input[0]).toEqual([10]);
+    expect(wrapper.emitted().input[1]).toEqual([10]);
+  });
+
+  it('should respect min value', () => {
+    const id = '1';
+    const value = 1;
+    const step = 2;
+    const min = 0;
+    const wrapper = shallow(CvNumberInput, { propsData: { id, step, value, min } });
+    wrapper.find('.down-icon').trigger('click');
+    wrapper.find('.down-icon').trigger('click');
+    expect(wrapper.emitted().input[0]).toEqual([0]);
+    expect(wrapper.emitted().input[1]).toEqual([0]);
   });
 
   it('should emit the correct value on input', () => {
@@ -207,5 +301,5 @@ describe('CvNumberInputSkeleton', () => {
 
   // ***************
   // FUNCTIONAL TESTS
-  // ***************
+  // **********
 });

@@ -11,7 +11,7 @@
     @keydown.esc.prevent="onEsc"
     @click.self="onExternalClick"
   >
-    <div class="bx--modal-container" ref="modalDialog">
+    <div class="bx--modal-container" :class="modalClasses" ref="modalDialog">
       <div
         class="cv-modal__before-content"
         ref="beforeContent"
@@ -20,34 +20,25 @@
         @focus="focusBeforeContent"
       />
       <div class="bx--modal-header">
-        <h4 class="bx--modal-header__label" v-if="$slots.label">
-          <slot name="label">label (Optional)</slot>
-        </h4>
-        <h2 class="bx--modal-header__heading">
-          <slot name="title">Modal Title</slot>
-        </h2>
-        <button class="bx--modal-close" type="button" @click="onClose" ref="close">
+        <p class="bx--modal-header__label">
+          <slot name="label"></slot>
+        </p>
+        <p class="bx--modal-header__heading">
+          <slot name="title">
+            Modal Title
+          </slot>
+        </p>
+        <button class="bx--modal-close" type="button" @click="onClose" ref="close" :aria-label="closeAriaLabel">
           <Close16 class="bx--modal-close__icon" />
         </button>
       </div>
 
       <div class="bx--modal-content" ref="content" :tabindex="scrollable ? 0 : undefined">
-        <slot name="content">
-          <p>
-            Passive modal notifications should only appear if there is an action the user needs to address immediately.
-            Passive modal notifications are persistent on the screen.
-          </p>
-        </slot>
+        <slot name="content"></slot>
       </div>
 
       <div class="bx--modal-footer" v-if="hasFooter">
-        <cv-button
-          type="button"
-          :kind="secondaryKind"
-          @click="onSecondaryClick"
-          v-if="this.$slots['secondary-button']"
-          ref="secondary"
-        >
+        <cv-button type="button" :kind="secondaryKind" @click="onSecondaryClick" v-if="hasSecondary" ref="secondary">
           <slot name="secondary-button">Secondary button</slot>
         </cv-button>
         <cv-button
@@ -55,7 +46,7 @@
           type="button"
           :kind="primaryKind"
           @click="onPrimaryClick"
-          v-if="this.$slots['primary-button']"
+          v-if="hasPrimary"
           ref="primary"
         >
           <slot name="primary-button">Primary button</slot>
@@ -85,6 +76,7 @@ export default {
     Close16,
   },
   props: {
+    closeAriaLabel: { type: String, default: 'Close modal' },
     kind: {
       type: String,
       default: '',
@@ -93,17 +85,26 @@ export default {
     autoHideOff: Boolean,
     visible: Boolean,
     primaryButtonDisabled: Boolean,
+    size: String,
   },
   data() {
     return {
       dataVisible: false,
       scrollable: false,
+      hasFooter: false,
+      hasHeaderLabel: false,
+      hasPrimary: false,
+      hasSecondary: false,
     };
   },
   mounted() {
     if (this.visible) {
       this.show();
     }
+    this.checkSlots();
+  },
+  beforeUpdate() {
+    this.checkSlots();
   },
   watch: {
     visible(val) {
@@ -125,8 +126,18 @@ export default {
     secondaryKind() {
       return 'secondary';
     },
-    hasFooter() {
-      return this.$slots['primary-button'] || this.$slots['secondary-button'];
+    modalClasses() {
+      const frontBit = 'bx--modal-container--';
+      switch (this.size) {
+        case 'xs':
+          return `${frontBit}xs`;
+        case 'small':
+          return `${frontBit}sm`;
+        case 'large':
+          return `${frontBit}lg`;
+        default:
+          return '';
+      }
     },
   },
   model: {
@@ -134,6 +145,13 @@ export default {
     prop: 'visible',
   },
   methods: {
+    checkSlots() {
+      // NOTE: this.$slots is not reactive so needs to be managed on beforeUpdate
+      this.hasFooter = !!(this.$slots['primary-button'] || this.$slots['secondary-button']);
+      this.hasHeaderLabel = !!this.$slots.label;
+      this.hasSecondary = !!this.$slots['secondary-button'];
+      this.hasPrimary = !!this.$slots['primary-button'];
+    },
     focusBeforeContent() {
       if (this.$slots['primary-button']) {
         this.$refs.primary.$el.focus();

@@ -1,9 +1,10 @@
+import Vue from 'vue';
 import { shallowMount as shallow, mount } from '@vue/test-utils';
-import { testComponent, testInstance, events } from './_helpers';
+import { testComponent, events } from './_helpers';
 import { CvTabs, CvTab } from '@/components/cv-tabs';
-import { settings } from '@rocketsoftware/carbon-components';
+import { settings as carbonSettings } from '@rocketsoftware/carbon-components';
 
-const { prefix } = settings;
+const carbonPrefix = carbonSettings.prefix;
 
 const TAB = function(props) {
   return {
@@ -32,9 +33,6 @@ describe('CvTabs', () => {
     const propsData = { noDefaultToFirst: false };
     const wrapper = shallow(CvTabs, {
       propsData,
-      stubs: {
-        CvDropdown: '<div class="CvDropdown__stubbed"></div>',
-      },
     });
 
     expect(wrapper.html()).toMatchSnapshot();
@@ -45,9 +43,6 @@ describe('CvTabs', () => {
       slots: {
         default: [Tab, Tab, Tab],
       },
-      stubs: {
-        CvDropdown: '<div class="CvDropdown__stubbed"></div>',
-      },
     });
 
     expect(wrapper.html()).toMatchSnapshot();
@@ -56,13 +51,14 @@ describe('CvTabs', () => {
   // ***************
   // FUNCTIONAL TESTS
   // ***************
-  it('tabs to be mounted with first selected', () => {
+  it('tabs to be mounted with first selected', async () => {
     const wrapper = mount(CvTabs, {
       slots: {
         default: [Tab, Tab, Tab],
       },
     });
 
+    await Vue.nextTick();
     expect(wrapper.vm.tabs.length).toBeGreaterThan(0);
     expect(wrapper.vm.tabs[0].dataSelected).toBeTruthy();
   });
@@ -109,23 +105,22 @@ describe('CvTabs', () => {
     expect(wrapper.vm.tabs[1].dataSelected).toBeTruthy();
   });
 
-  it('click to change tab', () => {
+  it('click to change tab', async () => {
     const wrapper = mount(CvTabs, {
       slots: {
         default: [Tab, Tab, Tab],
       },
     });
 
+    await Vue.nextTick();
     expect(wrapper.vm.tabs[0].dataSelected).toBeTruthy();
     wrapper
-      .findAll(`.${prefix}--tabs__nav-link`)
+      .findAll(`.${carbonPrefix}--tabs__nav-link`)
       .at(2)
       .trigger('click');
-    let dropDown = wrapper.find(`.${prefix}--tabs-trigger`);
 
     expect(wrapper.vm.tabs[0].dataSelected).toBeFalsy();
     expect(wrapper.vm.tabs[2].dataSelected).toBeTruthy();
-    expect(dropDown.vm.internalValue).toEqual(wrapper.vm.tabs[2].uid);
   });
 });
 

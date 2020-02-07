@@ -6,11 +6,11 @@ import SvTemplateView from '../_storybook/views/sv-template-view/sv-template-vie
 // import consts from '../_storybook/utils/consts';
 import knobsHelper from '../_storybook/utils/knobs-helper';
 
-import CvNumberInputNotesMD from '@rocketsoftware/vue/src/components/cv-number-input/cv-number-input-notes.md';
-import { CvNumberInput, CvNumberInputSkeleton } from '@rocketsoftware/vue/src';
+import CvNumberInputNotesMD from '../../packages/core/src/components/cv-number-input/cv-number-input-notes.md';
+import { CvNumberInput, CvNumberInputSkeleton } from '../../packages/core/src/';
 
 const storiesDefault = storiesOf('Components/CvNumberInput', module);
-const storiesExperimental = storiesOf('Experimental/CvNumberInput', module);
+// const storiesExperimental = storiesOf('Experimental/CvNumberInput', module);
 
 let preKnobs = {
   theme: {
@@ -63,19 +63,64 @@ let preKnobs = {
     prop: 'value',
     value: val => `${val}`,
   },
-  intValue: {
+  numValue: {
     group: 'attr',
     type: number,
     config: ['value', 0], // consts.CONFIG], // fails when used with number in storybook 4.1.4
     prop: 'value',
   },
+  min: {
+    group: 'attr',
+    type: number,
+    config: ['min', 0], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'min',
+    value: val => `${val}`,
+  },
+  numMin: {
+    group: 'attr',
+    type: number,
+    config: ['min', 0], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'min',
+  },
+  max: {
+    group: 'attr',
+    type: number,
+    config: ['max', 10], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'max',
+    value: val => `${val}`,
+  },
+  numMax: {
+    group: 'attr',
+    type: number,
+    config: ['max', 10], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'max',
+  },
+  step: {
+    group: 'attr',
+    type: number,
+    config: ['step', 1], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'step',
+    value: val => `${val}`,
+  },
+  numStep: {
+    group: 'attr',
+    type: number,
+    config: ['step', 1], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'step',
+  },
+  mobile: {
+    group: 'attr',
+    type: boolean,
+    config: ['mobile', false], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'mobile',
+  },
   vModel: {
     group: 'attr',
     value: `v-model="modelValue"`,
   },
-  vModelInt: {
+  vModelNum: {
     group: 'attr',
-    value: `v-model="modelValueInt"`,
+    value: `v-model="modelValueNum"`,
   },
   events: {
     group: 'attr',
@@ -86,19 +131,28 @@ let preKnobs = {
 let variants = [
   {
     name: 'default',
-    excludes: ['vModel', 'invalidMessageSlot', 'helperTextSlot', 'intValue', 'vModelInt'],
+    excludes: [
+      'vModel',
+      'invalidMessageSlot',
+      'helperTextSlot',
+      'numValue',
+      'vModelNum',
+      'numMin',
+      'numMax',
+      'numStep',
+    ],
   },
   {
-    name: 'integer value',
-    excludes: ['vModel', 'invalidMessageSlot', 'helperTextSlot', 'value', 'vModelInt'],
+    name: 'number value',
+    excludes: ['vModel', 'invalidMessageSlot', 'helperTextSlot', 'value', 'vModelNum', 'min', 'max', 'step'],
   },
   {
     name: 'helper and invalid slots',
-    excludes: ['vModel', 'events', 'intValue', 'vModelInt'],
+    excludes: ['vModel', 'events', 'numValue', 'vModelNum', 'numMin', 'numMax', 'numStep'],
   },
   { name: 'minimal', includes: ['label'] },
-  { name: 'vModel', includes: ['label', 'vModel', 'events'] },
-  { name: 'vModelInt', includes: ['label', 'vModelInt', 'events'] },
+  { name: 'vModel', includes: ['label', 'vModel', 'step', 'mobile', 'events'] },
+  { name: 'vModelNum', includes: ['label', 'vModelNum', 'numStep', 'mobile', 'events'] },
 ];
 
 let storySet = knobsHelper.getStorySet(variants, preKnobs);
@@ -127,7 +181,7 @@ for (const story of storySet) {
       <template slot="other">
         <div v-if="${templateString.indexOf('v-model') > 0}">
           <label>Model value:
-            <input type="number" v-model="modelValue"/>
+            <input type="number" v-model="modelValue" :step="propStep" />
           </label>
         </div>
       </template>
@@ -141,30 +195,34 @@ for (const story of storySet) {
         data() {
           return {
             modelValue: '100',
-            modelValueInt: 100,
+            modelValueNum: 100,
             storyName: story.name,
           };
         },
         watch: {
           modelValue() {
-            let intVal = parseInt(this.modelValue, 10);
+            let val;
+            val = parseFloat(this.modelValue);
 
-            if (isNaN(intVal)) {
-              intVal = 0;
+            if (isNaN(val)) {
+              val = 0;
             }
-            if (intVal !== this.modelValueInt) {
-              this.modelValueInt = intVal;
-            }
+            this.modelValueNum = val;
           },
-          modelValueInt() {
-            let val = '' + this.modelValueInt;
-            if (this.modelValue !== val) {
-              this.modelValue = '' + this.modelValueInt;
+          modelValueNum() {
+            // NOTE: DELIBERATE USE OF != TO COMPARE this.modelValueNum and this.modelValue
+            if (this.modelValue != this.modelValueNum) {
+              this.modelValue = '' + this.modelValueNum;
             }
           },
         },
         methods: {
           onInput: action('cv-number-input - input event'),
+        },
+        computed: {
+          propStep() {
+            return this.$props.step || this.$props.numStep.toString();
+          },
         },
       };
     },

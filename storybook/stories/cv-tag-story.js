@@ -6,11 +6,11 @@ import SvTemplateView from '../_storybook/views/sv-template-view/sv-template-vie
 // import consts from '../_storybook/utils/consts';
 import knobsHelper from '../_storybook/utils/knobs-helper';
 
-import CvTagNotesMD from '@rocketsoftware/vue/src/components/cv-tag/cv-tag-notes.md';
-import { CvTag, CvTagSkeleton } from '@rocketsoftware/vue/src';
+import CvTagNotesMD from '../../packages/core/src/components/cv-tag/cv-tag-notes.md';
+import { CvTag, CvTagSkeleton } from '../../packages/core/src/';
 
 const storiesDefault = storiesOf('Components/CvTag', module);
-// const storiesExperimental = storiesOf('Experimental/CvTag', module);
+// // const storiesExperimental = storiesOf('Experimental/CvTag', module);
 
 let preKnobs = {
   label: {

@@ -32,7 +32,7 @@
           </div>
         </div>
 
-        <div v-if="($slots.actions || $listeners.search) && !batchActive" class="bx--toolbar-content">
+        <div v-if="(hasActions || $listeners.search) && !batchActive" class="bx--toolbar-content">
           <div
             v-if="$listeners.search"
             :class="{
@@ -115,7 +115,7 @@
               v-for="(column, index) in dataColumns"
               :key="`${index}:${column}`"
               :heading="column.label ? column.label : column"
-              :sortable="sortable"
+              :sortable="isSortable(column)"
               :order="column.order"
               @sort="val => onSort(index, val)"
               :style="headingStyle(index)"
@@ -149,7 +149,7 @@
 
     <cv-pagination
       v-if="pagination"
-      v-bind="pagination"
+      v-bind="internalPagination"
       :number-of-items="internalNumberOfItems"
       @change="$emit('pagination', $event)"
     >
@@ -215,7 +215,7 @@ export default {
     sortable: Boolean,
     title: String,
     columns: { type: Array, required: true },
-    data: { type: Array, requried: true },
+    data: Array,
     zebra: Boolean,
     rowsSelected: { type: Array, default: () => [] },
     helperText: { type: String, default: undefined },
@@ -229,12 +229,17 @@ export default {
   },
   data() {
     return {
-      dataColumns: this.sortable
+      dataColumns: this.isSortable
         ? this.columns.map(item => ({
             label: item.label ? item.label : item,
             order: 'none',
+            sortable: item.sortable,
           }))
         : this.columns,
+      hasBatchActions: false,
+      hasActions: false,
+      hasToolbar: false,
+      isHelper: false,
       batchActive: false,
       headingChecked: false,
       dataRowsSelected: this.rowsSelected,
@@ -262,18 +267,27 @@ export default {
     this.$on('cv:beforeDestroy', srcComponent => this.onCvBeforeDestroy(srcComponent));
   },
   mounted() {
+    this.watchColumns();
     this.updateRowsSelected();
+    this.checkSlots();
+  },
+  beforeUpdate() {
+    this.checkSlots();
   },
   computed: {
-    hasBatchActions() {
-      return this.$slots['batch-actions'];
+    isSortable() {
+      return col => {
+        if (col && this.columns.some(column => column.sortable)) {
+          return col.sortable;
+        } else {
+          return this.sortable || this.columns.some(column => column.sortable);
+        }
+      };
     },
     hasTableHeader() {
       return this.title || this.isHelper;
     },
-    hasToolbar() {
-      return this.$slots.actions || this.$listeners.search || this.$slots['batch-actions'];
-    },
+
     hasExpandables() {
       return this.registeredRows.some(item => item.expandable);
     },
@@ -305,8 +319,9 @@ export default {
       const sizeClass = this.rowSize.length === 0 || this.rowSize === 'standard' ? '' : `${prefix}${this.rowSize} `;
       const zebraClass = this.zebra ? `${prefix}zebra ` : '';
       const borderlessClass = this.borderless ? `${prefix}no-border ` : '';
-      const skeletonClass = this.skeleton ? `bx--skeleton` : '';
-      return `${sizeClass}${zebraClass}${borderlessClass}${skeletonClass}`.trim();
+      const skeletonClass = this.skeleton ? `bx--skeleton ` : '';
+      const sortableClass = this.isSortable ? `${prefix}sort ` : '';
+      return `${sizeClass}${zebraClass}${borderlessClass}${skeletonClass}${sortableClass}`.trim();
     },
     headingStyle() {
       return index => this.dataColumns[index].headingStyle;
@@ -317,11 +332,15 @@ export default {
     selectedRows() {
       return this.dataRowsSelected;
     },
-    isHelper() {
-      return this.$slots['helper-text'] !== undefined || (this.helperText && this.helperText.length);
-    },
   },
   methods: {
+    checkSlots() {
+      // NOTE: this.$slots is not reactive so needs to be managed on beforeUpdate
+      this.hasBatchActions = !!this.$slots['batch-actions'];
+      this.hasActions = !!this.$slots.actions;
+      this.hasToolbar = !!(this.$slots.actions || this.$listeners.search || this.$slots['batch-actions']);
+      this.isHelper = !!(this.$slots['helper-text'] || (this.helperText && this.helperText.length));
+    },
     onCvMount(row) {
       this.registeredRows.push(row);
       row.$on('cv:expanded-change', this.onCvExpandedChange);
@@ -420,10 +439,11 @@ export default {
       this.$emit('overflow-menu-click', val);
     },
     watchColumns() {
-      this.dataColumns = this.sortable
+      this.dataColumns = this.isSortable
         ? this.columns.map(item => ({
             label: item.label ? item.label : item,
             order: 'none',
+            sortable: item.sortable,
           }))
         : this.columns;
     },

@@ -43,16 +43,18 @@ This is done after the modal transitions into its visible state, which is trigge
 
 ## Attributes
 
+- closeAriaLabel: optional label for close button, default 'Close modal'
 - auto-hide-off: boolean value if true the component user is expected to close the modal via visible property or hide method.
 - kind: 'danger' other wise default modal.
 - visible: visibility of modal dialog
 - primaryButtonDisabled: boolean value used to enable/disable the primary button
+- size: xs (extra small), small, default and large
 
 ## slots
 
 - label: optional
 - title:
-- content:
+- content: optional
 - primary-button: optional, no primary button if not specified
 - secondary-button: optional, no secondary button if not specified
 
