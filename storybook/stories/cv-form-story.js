@@ -4,7 +4,7 @@ import SvTemplateView from '../_storybook/views/sv-template-view/sv-template-vie
 // import consts from '../_storybook/utils/consts';
 import knobsHelper from '../_storybook/utils/knobs-helper';
 
-import CvFormNotesMD from '@rocketsoftware/vue/src/components/cv-form/cv-form-notes.md';
+import CvFormNotesMD from '../../packages/core/src/components/cv-form/cv-form-notes.md';
 import {
   CvForm,
   CvTextArea,
@@ -13,10 +13,10 @@ import {
   CvButton,
   CvSelectOptgroup,
   CvSelectOption,
-} from '@rocketsoftware/vue/src';
+} from '../../packages/core/src/';
 
 const storiesDefault = storiesOf('Components/CvForm', module);
-const storiesExperimental = storiesOf('Experimental/CvForm', module);
+// const storiesExperimental = storiesOf('Experimental/CvForm', module);
 
 const preKnobs = {};
 

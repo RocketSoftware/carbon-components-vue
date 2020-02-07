@@ -1,26 +1,30 @@
 <template>
-  <div class="cv-tabs">
+  <div class="cv-tabs" @focusout="onFocusout" @focusin="onFocusin" style="width: 100%;">
     <div
       data-tabs
       class="cv-tab bx--tabs"
+      :class="{ 'bx--tabs--container': container }"
       role="navigation"
       v-on="$listeners"
       v-bind="$attrs"
-      @keydown.right.prevent="moveRight"
-      @keydown.left.prevent="moveLeft"
+      @keydown.right.prevent="onRight"
+      @keydown.left.prevent="onLeft"
+      @keydown.down.prevent="onDown"
+      @keydown.up.prevent="onUp"
+      @keydown.esc.prevent="onEsc"
     >
-      <cv-dropdown
+      <div
         class="bx--tabs-trigger"
-        :value="`${selectedId}`"
-        @change="onDropChange"
-        :form-item="false"
-        :style="triggerStyleOverride"
+        :class="{ ' bx--tabs-trigger--open': open }"
+        tabindex="0"
+        ref="trigger"
+        @click="onClick"
+        @keydown.enter.prevent="onClick"
       >
-        <cv-dropdown-item v-for="tab in tabs" :key="`drop-${tab.uid}`" :value="`${tab.uid}`">{{
-          tab.label
-        }}</cv-dropdown-item>
-      </cv-dropdown>
-      <ul class="bx--tabs__nav bx--tabs__nav--hidden" role="tablist">
+        <a href="javascript:void(0)" class="bx--tabs-trigger-text" tabindex="-1">{{ currentTabLabel }}</a>
+        <chevron-down-glyph />
+      </div>
+      <ul class="bx--tabs__nav" :class="{ 'bx--tabs__nav--hidden': !open }" role="tablist">
         <li
           v-for="tab in tabs"
           :key="tab.uid"
@@ -40,6 +44,7 @@
             :aria-controls="tab.uid"
             :id="`${tab.uid}-link`"
             @click="onTabClick(tab.uid)"
+            @keydown.enter.prevent="onTabEnter(tab.uid)"
             ref="link"
             >{{ tab.label }}</a
           >
@@ -53,20 +58,23 @@
 </template>
 
 <script>
-import CvDropdown from '../cv-dropdown/cv-dropdown';
-import CvDropdownItem from '../cv-dropdown/cv-dropdown-item';
+import ChevronDownGlyph from '@rocketsoftware/icons-vue/es/chevron--down';
 
 export default {
   name: 'CvTabs',
-  components: { CvDropdown, CvDropdownItem },
   props: {
     noDefaultToFirst: Boolean,
+    container: Boolean,
   },
+  components: { ChevronDownGlyph },
   data() {
     return {
       tabs: [],
       selectedId: undefined,
       disabledTabs: [],
+      open: false,
+      lastDisplayProp: undefined,
+      // data is open
     };
   },
   created() {
@@ -82,8 +90,53 @@ export default {
       // <style carbon tweaks - DO NOT USE STYLE TAG as it causes SSR issues
       return { padding: 0 };
     },
+    currentTabLabel() {
+      const index = this.tabs.findIndex(tab => tab.uid === this.selectedId);
+
+      return index > -1 ? this.tabs[index].label : '';
+    },
   },
   methods: {
+    onFocusin(ev) {
+      if (ev.target.classList.contains('bx--tabs__nav-link') || ev.target.classList.contains('bx--tabs-trigger')) {
+        // record display prop state
+        this.lastDisplayProp = window.getComputedStyle(this.$refs.trigger).getPropertyValue('display');
+      } else {
+        this.lastDisplayProp = undefined;
+      }
+    },
+    onFocusout(ev) {
+      // works with onFocusin to determine whether focus needs to be set to a tab or trigger
+      const displayProp = window.getComputedStyle(this.$refs.trigger).getPropertyValue('display');
+      if (ev.relatedTarget) {
+        if (
+          ev.relatedTarget.classList.contains('bx--tabs__nav-link') ||
+          ev.relatedTarget.classList.contains('bx--tabs-trigger')
+        ) {
+          return; // no need to do anything - focus is going somewhere
+        } else {
+          this.open = false;
+        }
+      } else {
+        if (this.lastDisplayProp && this.lastDisplayProp !== displayProp) {
+          if (displayProp === 'none') {
+            // focus on selected tab
+            const currentTabLink = this.$refs.link.find(link => link.getAttribute('aria-controls') === this.selectedId);
+            if (currentTabLink) {
+              currentTabLink.focus();
+            }
+          } else {
+            this.$refs.trigger.focus();
+          }
+        } else {
+          this.open = false;
+        }
+      }
+    },
+    onWindowResize() {
+      // check whether trigger is displayed
+      this.dataDropdownShown = window.getComputedStyle(this.$refs.trigger).getPropertyValue('display') !== 'none';
+    },
     onDropChange(val) {
       this.onTabClick(val);
     },
@@ -93,6 +146,10 @@ export default {
       this.checkDisabled(srcComponent);
       if (this.selectedId === undefined) {
         this.checkSelected();
+      } else {
+        if (srcComponent.internalSelected) {
+          this.onTabClick(srcComponent.uid);
+        }
       }
     },
     onCvBeforeDestroy(srcComponent) {
@@ -101,12 +158,11 @@ export default {
         const wasSelected = srcComponent.uid === this.selectedId;
 
         this.tabs.splice(tabIndex, 1);
-        this.selectedId = undefined;
 
         this.checkDisabled(srcComponent);
 
-        if (wasSelected) {
-          this.checkSelected();
+        if (wasSelected && this.tabs.length) {
+          this.onTabClick(this.tabs[Math.max(tabIndex - 1, 0)].uid);
         }
       }
     },
@@ -124,6 +180,12 @@ export default {
             } else {
               this.tabs[i].internalSelected = false;
             }
+          }
+
+          this.open = false;
+          if (this.$refs.trigger) {
+            // following code build sometimes trigger is not yet available
+            this.$refs.trigger.focus();
           }
 
           this.$emit('tab-selected', newIndex);
@@ -150,80 +212,136 @@ export default {
       }
     },
     checkSelected() {
-      let somethingSelected = false;
+      let id;
 
       for (let i = 0; i < this.tabs.length; i++) {
         if (this.tabs[i].internalSelected) {
-          this.onTabClick(this.tabs[i].uid);
-          somethingSelected = true;
+          id = this.tabs[i].uid;
         }
       }
 
-      if (!this.noDefaultToFirst && !somethingSelected && this.tabs.length) {
-        this.onTabClick(this.tabs[0].uid);
+      if (!this.noDefaultToFirst && id === undefined && this.tabs.length) {
+        id = this.tabs[0].uid;
+      }
+
+      if (id !== undefined) {
+        this.$nextTick(() => {
+          this.onTabClick(id);
+        });
       }
     },
     isAllTabsDisabled() {
       return this.disabledTabs.length === this.tabs.length;
     },
-    moveLeft() {
-      if (this.isAllTabsDisabled()) {
-        return;
-      }
-      let newId;
-      let newIndex;
+    onTabEnter(id) {
+      // const newIndex = this.tabs.findIndex(tab => tab.uid === id);
 
-      if (this.selectedId) {
-        newIndex = this.tabs.indexOf(this.selectedId);
-      }
-
-      if (newIndex > 0) {
-        newIndex--;
-      } else {
-        newIndex = this.tabs.length - 1;
-      }
-      newId = this.tabs[newIndex].uid;
-
-      while (this.disabledTabs.indexOf(newId) !== -1) {
-        if (newIndex > 0) {
-          newIndex--;
-        } else {
-          newIndex = this.tabs.length - 1;
-        }
-        newId = this.tabs[newIndex].uid;
-      }
-      this.onTabClick(newId);
-      this.$refs.link[newIndex].focus();
+      this.onTabClick(id);
+      this.$refs.trigger.focus();
     },
-    moveRight() {
+    onClick() {
+      this.open = !this.open;
+    },
+    onEsc() {
+      this.open = false;
+    },
+    onUp() {
       if (this.isAllTabsDisabled()) {
         return;
       }
-      let newId;
-      let newIndex;
 
-      if (this.selectedId) {
-        newIndex = this.tabs.indexOf(this.selectedId);
-      }
+      const displayProp = window.getComputedStyle(this.$refs.trigger).getPropertyValue('display');
 
-      if (newIndex < this.tabs.length - 1) {
-        newIndex++;
-      } else {
-        newIndex = 0;
-      }
-      newId = this.tabs[newIndex].uid;
-
-      while (this.disabledTabs.indexOf(newIndex) !== -1) {
-        if (newIndex < this.tabs.length - 1) {
-          newIndex++;
+      if (displayProp !== 'none') {
+        const el = document.activeElement;
+        let id;
+        if (el.classList.contains('bx--tabs__nav-link')) {
+          id = el.getAttribute('aria-controls');
         } else {
-          newIndex = 0;
+          id = this.selectedId;
+        }
+
+        const newIndex = this.move(id, false);
+        this.$refs.link[newIndex].focus();
+      }
+    },
+    onDown() {
+      if (this.isAllTabsDisabled()) {
+        return;
+      }
+
+      const displayProp = window.getComputedStyle(this.$refs.trigger).getPropertyValue('display');
+
+      if (displayProp !== 'none') {
+        if (!this.open) {
+          this.open = true;
+        } else {
+          const el = document.activeElement;
+          let id;
+          if (el.classList.contains('bx--tabs__nav-link')) {
+            id = el.getAttribute('aria-controls');
+          } else {
+            id = this.selectedId;
+          }
+
+          const newIndex = this.move(id, true);
+          this.$refs.link[newIndex].focus();
+        }
+      }
+    },
+    onLeft() {
+      if (this.isAllTabsDisabled()) {
+        return;
+      }
+
+      const displayProp = window.getComputedStyle(this.$refs.trigger).getPropertyValue('display');
+      if (displayProp === 'none') {
+        const newIndex = this.move(this.selectedId, false);
+        const newId = this.tabs[newIndex].uid;
+
+        this.onTabClick(newId);
+        this.$refs.link[newIndex].focus();
+      }
+    },
+    move(id, next) {
+      let newIndex;
+      let newId;
+
+      newIndex = this.tabs.findIndex(tab => tab.uid === id);
+
+      if (newIndex > -1) {
+        newIndex = next ? newIndex + 1 : newIndex - 1;
+      }
+      if (newIndex < 0 || newIndex >= this.tabs.length) {
+        newIndex = next ? 0 : this.tabs.length - 1;
+      }
+
+      newId = this.tabs[newIndex].uid;
+      while (newId === this.selectedId || this.disabledTabs.indexOf(newId) !== -1) {
+        if (newIndex > -1) {
+          newIndex = next ? newIndex + 1 : newIndex - 1;
+        }
+        if (newIndex < 0 || newIndex >= this.tabs.length) {
+          newIndex = next ? 0 : this.tabs.length - 1;
         }
         newId = this.tabs[newIndex].uid;
       }
 
-      this.onTabClick(newId);
-      this.$refs.link[newIndex].focus();
+      return newIndex;
+    },
+    onRight() {
+      if (this.isAllTabsDisabled()) {
+        return;
+      }
+
+      const displayProp = window.getComputedStyle(this.$refs.trigger).getPropertyValue('display');
+      if (displayProp === 'none') {
+        const newIndex = this.move(this.selectedId, true);
+        const newId = this.tabs[newIndex].uid;
+
+        this.onTabClick(newId);
+        this.$refs.link[newIndex].focus();
+      }
     },
     selected(index) {
       let selItem = this.tabs[index ? index : -1];

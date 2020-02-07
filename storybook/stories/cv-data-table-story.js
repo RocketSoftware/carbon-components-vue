@@ -6,7 +6,7 @@ import SvTemplateView from '../_storybook/views/sv-template-view/sv-template-vie
 // import consts from '../_storybook/utils/consts';
 import knobsHelper from '../_storybook/utils/knobs-helper';
 
-import CvDataTableNotesMD from '@rocketsoftware/vue/src/components/cv-data-table/cv-data-table-notes.md';
+import CvDataTableNotesMD from '../../packages/core/src/components/cv-data-table/cv-data-table-notes.md';
 import {
   CvDataTable,
   CvDataTableAction,
@@ -17,13 +17,13 @@ import {
   CvOverflowMenuItem,
   CvTag,
   CvDataTableSkeleton,
-} from '@rocketsoftware/vue/src';
+} from '../../packages/core/src/';
 import TrashCan16 from '@rocketsoftware/icons-vue/es/trash-can/16';
 import Save16 from '@rocketsoftware/icons-vue/es/save/16';
 import Download16 from '@rocketsoftware/icons-vue/es/download/16';
 
 const storiesDefault = storiesOf('Components/CvDataTable', module);
-const storiesExperimental = storiesOf('Experimental/CvDataTable', module);
+// const storiesExperimental = storiesOf('Experimental/CvDataTable', module);
 
 let preKnobs = {
   rowSize: {
@@ -97,7 +97,7 @@ let preKnobs = {
       'columns',
       {
         columns: [
-          { label: 'Name', headingStyle: { textTransform: 'uppercase' } },
+          { label: 'Name', headingStyle: { textTransform: 'uppercase' }, sortable: true },
           { label: 'Protocol', headingStyle: { textTransform: 'uppercase' } },
           {
             label: 'Port',
@@ -115,6 +115,18 @@ let preKnobs = {
           },
           { label: 'Status', headingStyle: { textTransform: 'uppercase' } },
         ],
+      },
+    ],
+    prop: 'columns',
+    value: val => val.columns,
+  },
+  columns3: {
+    group: 'attr',
+    type: object,
+    config: [
+      'columns',
+      {
+        columns: [{ label: 'Name', sortable: true }, 'Protocol', 'Port', 'Rule', 'Attached Groups', 'Status'],
       },
     ],
     prop: 'columns',
@@ -288,6 +300,7 @@ let variants = [
     excludes: [
       'search2',
       'columns2',
+      'columns3',
       'slottedData',
       'htmlData',
       'helperTextSlot',
@@ -299,10 +312,15 @@ let variants = [
     ],
   },
   {
+    name: 'name-only-sortable',
+    includes: ['columns3', 'data', 'sortable', 'sort'],
+  },
+  {
     name: 'search labels',
     excludes: [
       'search',
       'columns2',
+      'columns3',
       'slottedData',
       'htmlData',
       'helperTextSlot',
@@ -317,6 +335,7 @@ let variants = [
     name: 'scoped slots',
     excludes: [
       'columns2',
+      'columns3',
       'slottedData',
       'htmlData',
       'helperTextSlot',
@@ -334,7 +353,7 @@ let variants = [
     includes: ['columns', 'expandingSlottedData', 'data', 'basicPagination', 'hasExpandAll'],
   },
   { name: 'slotted HTML', includes: ['columns', 'htmlData', 'basicPagination'] },
-  { name: 'styled columns', includes: ['columns2', 'data'] },
+  { name: 'styled columns', includes: ['sortable', 'columns2', 'data'] },
 ];
 
 let storySet = knobsHelper.getStorySet(variants, preKnobs);

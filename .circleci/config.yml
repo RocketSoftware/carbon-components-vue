@@ -28,8 +28,8 @@ jobs:
       #         ibmcloud cf add-plugin-repo CF-Community https://plugins.cloudfoundry.org
       #         ibmcloud cf install-plugin blue-green-deploy -f -r CF-Community
 
-      #         # Build default storybook
-      #         yarn build --scope storybook
+              # Build default storybook
+              # yarn build:storybook --quiet
 
       #         # Use blue-green-deploy for our buildpack
       #         ibmcloud cf blue-green-deploy carbon-storybook-vue \

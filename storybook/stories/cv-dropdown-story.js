@@ -6,11 +6,11 @@ import SvTemplateView from '../_storybook/views/sv-template-view/sv-template-vie
 // import consts from '../_storybook/utils/consts';
 import knobsHelper from '../_storybook/utils/knobs-helper';
 
-import CvDropdownNotesMD from '@rocketsoftware/vue/src/components/cv-dropdown/cv-dropdown-notes.md';
-import { CvDropdown, CvDropdownItem, CvDropdownSkeleton } from '@rocketsoftware/vue/src';
+import CvDropdownNotesMD from '../../packages/core/src/components/cv-dropdown/cv-dropdown-notes.md';
+import { CvDropdown, CvDropdownItem, CvDropdownSkeleton } from '../../packages/core/src/';
 
 const storiesDefault = storiesOf('Components/CvDropdown', module);
-const storiesExperimental = storiesOf('Experimental/CvDropdown', module);
+// const storiesExperimental = storiesOf('Experimental/CvDropdown', module);
 
 let preKnobs = {
   theme: {
@@ -76,6 +76,12 @@ let preKnobs = {
     slot: 'helper-text',
     value: 'Some helpful text',
   },
+  hideSelected: {
+    group: 'attr',
+    type: boolean,
+    config: ['hide-selected', false], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: 'hide-selected',
+  },
   invalidMessage: {
     group: 'attr',
     type: text,
@@ -109,7 +115,7 @@ let variants = [
   },
   {
     name: 'slots',
-    excludes: ['vModel', 'events', 'helperText', 'invalidMessage'],
+    excludes: ['vModel', 'events'],
   },
   { name: 'minimal', includes: ['value'] },
   { name: 'events', includes: ['value', 'events'] },

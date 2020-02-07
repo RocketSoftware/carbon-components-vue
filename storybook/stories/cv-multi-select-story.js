@@ -6,11 +6,11 @@ import SvTemplateView from '../_storybook/views/sv-template-view/sv-template-vie
 // import consts from '../_storybook/utils/consts';
 import knobsHelper from '../_storybook/utils/knobs-helper';
 
-import CvMultiSelectNotesMD from '@rocketsoftware/vue/src/components/cv-multi-select/cv-multi-select-notes.md';
-import { CvMultiSelect } from '@rocketsoftware/vue/src';
+import CvMultiSelectNotesMD from '../../packages/core/src/components/cv-multi-select/cv-multi-select-notes.md';
+import { CvMultiSelect } from '../../packages/core/src/';
 
 const storiesDefault = storiesOf('Components/CvMultiSelect', module);
-const storiesExperimental = storiesOf('Experimental/CvMultiSelect', module);
+// const storiesExperimental = storiesOf('Experimental/CvMultiSelect', module);
 
 const fruits = [
   'Apple',
@@ -179,15 +179,7 @@ let variants = [
   },
   {
     name: 'slots',
-    excludes: [
-      'vModel',
-      'events',
-      'helperText',
-      'invalidMessage',
-      'userFilter',
-      'userHighlight',
-      'userFilterOrHighlight',
-    ],
+    excludes: ['vModel', 'events', 'userFilter', 'userHighlight', 'userFilterOrHighlight'],
   },
   { name: 'events', includes: ['filterable', 'events'] },
   { name: 'vModel', includes: ['vModel'] },

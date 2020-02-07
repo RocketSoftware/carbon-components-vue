@@ -49,7 +49,7 @@
 <script>
 import Vue from 'vue';
 import SvView from './sv-view.vue';
-import { CvInlineNotification } from '@rocketsoftware/vue/src';
+import { CvInlineNotification } from '../../../../packages/core/src';
 
 export default {
   name: 'SvTemplateView',
@@ -100,6 +100,7 @@ export default {
       Vue.nextTick(this.$refs.copyButton.classList.add('sv-template-view__copy--copied'));
     },
     method(methodName) {
+      // NOTE: this.$slots is not reactive so needs to be managed on beforeUpdate
       const result = this.$slots.component[0].componentInstance[methodName];
       if (!result) {
         // console.dir(this.$slots.component[0].componentInstance);
@@ -189,7 +190,7 @@ $component-padding: 20px;
 
 .sv-template-view__copy {
   position: absolute;
-  top: 39px;
+  top: 54px;
   left: 0;
 
   &.sv-template-view__copy--copied::after {

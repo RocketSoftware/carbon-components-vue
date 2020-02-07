@@ -6,12 +6,12 @@ import SvTemplateView from '../_storybook/views/sv-template-view/sv-template-vie
 // import consts from '../_storybook/utils/consts';
 import knobsHelper from '../_storybook/utils/knobs-helper';
 
-import CvFileUploaderNotesMD from '@rocketsoftware/vue/src/components/cv-file-uploader/cv-file-uploader-notes.md';
-import { CvFileUploader, CvFileUploaderSkeleton } from '@rocketsoftware/vue/src';
+import CvFileUploaderNotesMD from '../../packages/core/src/components/cv-file-uploader/cv-file-uploader-notes.md';
+import { CvFileUploader, CvFileUploaderSkeleton } from '../../packages/core/src/';
 import AddFilled16 from '@rocketsoftware/icons-vue/es/add--filled/16';
 
 const storiesDefault = storiesOf('Components/CvFileUploader', module);
-const storiesExperimental = storiesOf('Experimental/CvFileUploader', module);
+// const storiesExperimental = storiesOf('Experimental/CvFileUploader', module);
 
 let preKnobs = {
   label: {

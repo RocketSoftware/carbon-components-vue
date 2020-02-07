@@ -48,6 +48,7 @@
           'bx--dropdown--invalid': isInvalid,
           'bx--dropdown--disabled': disabled,
           'bx--dropdown--inline': inline,
+          'bx--dropdown--show-selected': !hideSelected,
         }"
         v-bind="$attrs"
         @keydown.down.prevent="onDown"
@@ -117,11 +118,14 @@ export default {
     },
     up: Boolean,
     value: String, // initial value of the dropdown,
+    hideSelected: Boolean,
   },
   data() {
     return {
       open: false,
       dataValue: this.value,
+      isHelper: false,
+      isInvalid: false,
     };
   },
   created() {
@@ -136,6 +140,10 @@ export default {
       }
     });
     this.internalValue = this.internalValue; // forces update of value
+    this.checkSlots();
+  },
+  beforeUpdate() {
+    this.checkSlots();
   },
   model: {
     prop: 'value',
@@ -147,12 +155,6 @@ export default {
     },
   },
   computed: {
-    isInvalid() {
-      return this.$slots['invalid-message'] !== undefined || (this.invalidMessage && this.invalidMessage.length);
-    },
-    isHelper() {
-      return this.$slots['helper-text'] !== undefined || (this.helperText && this.helperText.length);
-    },
     internalValue: {
       get() {
         return this.dataValue;
@@ -198,6 +200,11 @@ export default {
     },
   },
   methods: {
+    checkSlots() {
+      // NOTE: this.$slots is not reactive so needs to be managed on beforeUpdate
+      this.isInvalid = !!(this.$slots['invalid-message'] || (this.invalidMessage && this.invalidMessage.length));
+      this.isHelper = !!(this.$slots['helper-text'] || (this.helperText && this.helperText.length));
+    },
     onCvMount(srcComponent) {
       if (srcComponent.internalSelected) {
         this.internalValue = srcComponent.value;

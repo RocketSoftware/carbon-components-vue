@@ -1,6 +1,177 @@
 # Changelog
 
-## 2.18.0 (Nov 6th 2019)
+## 2.22.0-canary.1 (feb 4th 2020)
+
+## Feat
+
+- Mobile number input version
+- Expanded property added to UIShell sidenav menus
+-
+
+## Fix
+
+- Number input tests
+- Input event emit from CvNumberInput on use of up down buttons
+- Add missing closeAriaLabel property to CvModal
+
+## Chore
+
+- Copy button position is stories
+- FavIcon in storybook
+- Linter warnings on story source loading
+- CI messages
+
+## 2.22.0-canary.0 (jan 29th 2020)
+
+## Chore
+
+- move to Vue CLI 4
+- Fix node engine version
+- Ensure CI Check run before deploying storybook
+
+## Fix
+
+- Linter warnings
+
+## 2.21.0 (jan 24th 2020)
+
+## fix
+
+- Error icon used in inline-loading
+- Toast notification notes typo
+
+## 2.21.0-canary.0 (jan 21st 2020)
+
+### feat
+
+- Add size variations to CvModal
+- Add hide selected option to CvDropDown.
+- Make title only CvModal possible
+- Add container option to CvTabs
+- Update CvTag styling to 10.9
+- Update CvSearch size options
+
+### fix
+
+- Tab behaviour when adding and removing tabs when selecting a tab immediately after
+
+## 2.20.1 (jan 16th 2020)
+
+- fix: Disable number input up down buttons when component disabled
+
+## 2.20.1-canary.3 (jan 16th 2020)
+
+- fix: Merge missing commits from last release
+
+## 2.20.1-canary.2 (jan 16th 2020)
+
+### fix
+
+- Reverted to using stepUp/stepDOwn input methods for number input after checking IE11 support.
+- Initial value of date picker was not being set
+
+## 2.20.1-canary.1 (jan 10th 2020)
+
+### fix
+
+- Decimal number edits e.g. 10.001 with step 001. Using the keyboard to delete .001 caused .000 to be reapplied.
+
+## 2.20.1-canary.0 (jan 3rd 2020)
+
+### fix
+
+- Possible IE11 fix for colspan > 1000 defaulting to 1
+- Loading overlay fix
+
+## 2.20.0 (Dec 16th 2019)
+
+### fix
+
+- Prevent double event on date change
+
+## 2.20.0-canary.2 (Dec 13th 2019)
+
+### Feat
+
+- Add side nav rail feature
+- Add support for light cv-tile (needs Carbon > 10.7.4)
+- Add button set
+
+### Fix
+
+- Fixed some typos (requried -> required)
+- Fix date picker change event error
+
+## 2.20.0-canary.1 (Dec 6th 2019)
+
+### Feat
+
+- Update to carbon-components 10.7.4 DOM
+- Add edning state to CvInlineLoader
+- Make individual columns sortable in CvDataTable
+- Router link object usage (Location)
+- Additional tests
+  - CvInlineLoader
+  - CvInlineNotification
+  - CvToastNotification
+  - CvTextInput
+  - CvList
+  - CvLoading
+
+### Chore
+
+- Welcome page updates
+
+### Fix
+
+- Use internal pagination bind property
+- IE11 missing input event (use change)
+- icon use warning in toast notification
+- SVG ClassList missing IE and pre canary Edge
+
+## 2.20.0-canary.0 (Nov 21th 2019)
+
+### Feat
+
+- Add decimal ability to number input.
+
+### Fix
+
+- Fix CvIconButton tooltip
+
+## 2.19.0 (Nov 19th 2019)
+
+### Chore
+
+- CvOverflowMenu correct html to include menu-item option-content span
+
+## 2.19.0-canary.1 (Nov 18th 2019)
+
+### Feat
+
+- CvToggleSkeleton
+
+### Fix
+
+- Slot check reactivyt (accross 12 components with helperText and invalidMessage)
+- CvCombobox placeholder
+- CvMultiSelect filter clear event
+- CvMultiSelect expand / close when clicking chevron
+- CvCombobox auto-filter true at startup presenting empty list
+
+### Chore
+
+- CvLink tests
+- CvTextArea tests
+- Restored storybook version to keep package.json in sync
+
+## 2.19.0-canary.0 (Nov 12th 2019)
+
+### Chore
+
+- Change CvTabs to use same HTML as core carbon.
+
+## 2.18.0 (Nov 11th 2019)
 
 ### Feat
 

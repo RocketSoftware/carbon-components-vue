@@ -1,7 +1,7 @@
 {
   "name": "@rocketsoftware/vue",
   "description": "A collection of components for the Carbon Design System built using Vue.js",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -55,21 +55,21 @@
     "/src"
   ],
   "scripts": {
-    "build": "vue-cli-service build --target lib --name carbon-vue ./src/index.js --no-clean"
+    "build": "vue-cli-service build --target lib --name carbon-vue ./src/index.js --no-clean",
+    "clean": "rimraf dist node_modules/.cache"
   },
   "engines": {
     "node": ">=10.x"
   },
   "sideEffects": true,
   "dependencies": {
-    "@rocketsoftware/carbon-components": "0.2.8",
-    "@rocketsoftware/icons-vue": "0.2.8",
+    "@rocketsoftware/carbon-components": "0.3.0",
+    "@rocketsoftware/icons-vue": "0.3.0",
     "flatpickr": "4.6.3",
     "vue": "^2.6.10"
   },
   "devDependencies": {
     "@vue/cli-service": "^3.11.0",
-    "babel-preset-env": "1.7.0",
     "eslint-plugin-prettier": "^3.1.1",
     "vue-template-compiler": "^2.6.10"
   }

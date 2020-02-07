@@ -74,7 +74,7 @@ $ npm install @carbon/vue
 In src/main.js add the following to include the carbon styles and components.
 
 ```js
-import 'carbon-components/css/carbon-components.css';
+import '@rocketsoftware/carbon-components/css/carbon-components.css';
 import CarbonComponentsVue from '@carbon/vue/src/index';
 Vue.use(CarbonComponentsVue);
 ```
@@ -88,9 +88,7 @@ Replace the contents of src/components/HelloWorld.vue with the following
     <cv-text-input label="Who are you?" v-model="yourName" placeholder="your name" />
     <cv-button @click="onClick">Hello {{yourName}}</cv-button>
     <cv-modal :visible="visible" @modal-hidden="modalClosed">
-      <template slot="title"
-        >Welcome to @carbon/vue {{yourName}}</template
-      >
+      <template slot="title">Welcome to @carbon/vue {{yourName}}</template>
       <template slot="content">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit, seed do eiusmod tempor incididunt ut labore et
