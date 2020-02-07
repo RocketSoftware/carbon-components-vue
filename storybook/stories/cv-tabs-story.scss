@@ -5,7 +5,7 @@
 $css--font-face: false;
 $css--body: false;
 $css--reset: false;
-@import '~carbon-components/src/globals/scss/css--helpers'; // SEE THE NOTE ABOVE
+@import '~@rocketsoftware/carbon-components/src/globals/scss/css--helpers'; // SEE THE NOTE ABOVE
 
 .bx--tabs--container ~ div {
   height: 320px;
