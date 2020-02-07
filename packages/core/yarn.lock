@@ -50,27 +50,27 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
-"@rocketsoftware/carbon-components@0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@rocketsoftware/carbon-components/-/carbon-components-0.2.8.tgz#0dd96c62a4a412e0a496b0eb9a6126670cf31c01"
-  integrity sha512-ZP0Dl8t563+5jSmHBoSzf9NHMhymcgJCWUMb5jsV1NKhvXaMCJahRinon3UQBH+fmEkddWat0ht+eNSVgbypYQ==
+"@rocketsoftware/carbon-components@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@rocketsoftware/carbon-components/-/carbon-components-0.3.0.tgz#f14e6887a4710f754a1b7a6efa576c1985e0f3b1"
+  integrity sha512-+f3axhQ8tjcvK8aB8aH/nXm95Xakg6aPaIywFMG6TxJuG3h2mm+4jw9DbFTF+85SOen/9a3OCCmzR9N8DdBesQ==
   dependencies:
     carbon-icons "^7.0.7"
     flatpickr "4.6.1"
     lodash.debounce "^4.0.8"
     warning "^3.0.0"
 
-"@rocketsoftware/icon-helpers@^0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@rocketsoftware/icon-helpers/-/icon-helpers-0.2.8.tgz#afa29d629697ed7f7efcd6b4977f80bf9ae94a12"
-  integrity sha512-4yeyBsbTO6v3aVRNGFpsxl75WV6wRNu42qcP3xSynooxelo+8nwmSvisCU6Ch5qOYkFhpv7XDuVe72XS1q/maQ==
+"@rocketsoftware/icon-helpers@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@rocketsoftware/icon-helpers/-/icon-helpers-0.3.0.tgz#c768d250c8aa488dce35651e7f34d1edf69aef50"
+  integrity sha512-Yk5VfJ7ono4uWNhQRshbTG4brAuC4BDE9dlNQ9zZ4q625sMHvwzi9QGzVys2FHSGT+Fqh98K3kOR1JVVjeuTbw==
 
-"@rocketsoftware/icons-vue@0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@rocketsoftware/icons-vue/-/icons-vue-0.2.8.tgz#36d395cc474f7810a61dfce9818515ac3494a646"
-  integrity sha512-hTbXT87eAgdl+EHr83ZFeV8VBfriiAtKfC+J1ljimUbsRLSZroOrX6AkcRRhPX5mzuFIfL1lRp2T5wHzRUPMHA==
+"@rocketsoftware/icons-vue@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@rocketsoftware/icons-vue/-/icons-vue-0.3.0.tgz#606fc2938f6498d3f5ddd6df89cf117df123bd8e"
+  integrity sha512-n12PvOY1/lQqjKWDbUwmss8ZGcNFrsh7c6zGYa6iktUk/MXWP6l22slOprBmR3ipweN7lKG8npkefPdQTItpAQ==
   dependencies:
-    "@rocketsoftware/icon-helpers" "^0.2.8"
+    "@rocketsoftware/icon-helpers" "^0.3.0"
 
 "@soda/friendly-errors-webpack-plugin@^1.7.1":
   version "1.7.1"

@@ -1,9 +1,9 @@
 import { shallowMount as shallow } from '@vue/test-utils';
 import { testComponent } from './_helpers';
 import { CvToastNotification } from '@/components/cv-toast-notification';
-import ErrorFilled20 from '@carbon/icons-vue/es/error--filled/20';
-import CheckmarkFilled20 from '@carbon/icons-vue/es/checkmark--filled/20';
-import WarningFilled20 from '@carbon/icons-vue/es/warning--filled/20';
+import ErrorFilled20 from '@rocketsoftware/icons-vue/es/error--filled/20';
+import CheckmarkFilled20 from '@rocketsoftware/icons-vue/es/checkmark--filled/20';
+import WarningFilled20 from '@rocketsoftware/icons-vue/es/warning--filled/20';
 
 describe('CvToastNotification', () => {
   const kinds = ['error', 'info', 'warning', 'success'];

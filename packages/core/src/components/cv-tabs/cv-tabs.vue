@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import ChevronDownGlyph from '@carbon/icons-vue/es/chevron--down';
+import ChevronDownGlyph from '@rocketsoftware/icons-vue/es/chevron--down';
 
 export default {
   name: 'CvTabs',

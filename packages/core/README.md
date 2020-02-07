@@ -74,7 +74,7 @@ $ npm install @carbon/vue
 In src/main.js add the following to include the carbon styles and components.
 
 ```js
-import 'carbon-components/css/carbon-components.css';
+import '@rocketsoftware/carbon-components/css/carbon-components.css';
 import CarbonComponentsVue from '@carbon/vue/src/index';
 Vue.use(CarbonComponentsVue);
 ```

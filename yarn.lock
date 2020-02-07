@@ -856,18 +856,6 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@carbon/icon-helpers@^10.5.0":
-  version "10.5.1"
-  resolved "https://registry.yarnpkg.com/@carbon/icon-helpers/-/icon-helpers-10.5.1.tgz#a13426cf137eb6080cfe46405a567bd470b597a3"
-  integrity sha512-CPNDoDQYjCGg51WfI7w2Iwgz0S+svh0E3hWh3aybnDMhUPlikz8QFiWNpD55NSXAYe1C21CtRla6Rgxa1EkmNg==
-
-"@carbon/icons-vue@10.8.0":
-  version "10.8.0"
-  resolved "https://registry.yarnpkg.com/@carbon/icons-vue/-/icons-vue-10.8.0.tgz#68f242e36b814efd03b777b79d1e3357cd5bf6dc"
-  integrity sha512-kWfr6sKYTMQMTpUJ9S/iias0N9dn5GPfnZWBa1kC0/pUbimuD9XPUVFS7+uZRGy7QqeIVZFe8qlU/2W5eAqZCQ==
-  dependencies:
-    "@carbon/icon-helpers" "^10.5.0"
-
 "@chromaui/localtunnel@1.10.1":
   version "1.10.1"
   resolved "https://registry.yarnpkg.com/@chromaui/localtunnel/-/localtunnel-1.10.1.tgz#34da7dab7055a16b1b9034a9eb7e3054ebec4b98"
@@ -2259,6 +2247,28 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
     warning "^3.0.0"
+
+"@rocketsoftware/carbon-components@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@rocketsoftware/carbon-components/-/carbon-components-0.3.0.tgz#f14e6887a4710f754a1b7a6efa576c1985e0f3b1"
+  integrity sha512-+f3axhQ8tjcvK8aB8aH/nXm95Xakg6aPaIywFMG6TxJuG3h2mm+4jw9DbFTF+85SOen/9a3OCCmzR9N8DdBesQ==
+  dependencies:
+    carbon-icons "^7.0.7"
+    flatpickr "4.6.1"
+    lodash.debounce "^4.0.8"
+    warning "^3.0.0"
+
+"@rocketsoftware/icon-helpers@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@rocketsoftware/icon-helpers/-/icon-helpers-0.3.0.tgz#c768d250c8aa488dce35651e7f34d1edf69aef50"
+  integrity sha512-Yk5VfJ7ono4uWNhQRshbTG4brAuC4BDE9dlNQ9zZ4q625sMHvwzi9QGzVys2FHSGT+Fqh98K3kOR1JVVjeuTbw==
+
+"@rocketsoftware/icons-vue@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@rocketsoftware/icons-vue/-/icons-vue-0.3.0.tgz#606fc2938f6498d3f5ddd6df89cf117df123bd8e"
+  integrity sha512-n12PvOY1/lQqjKWDbUwmss8ZGcNFrsh7c6zGYa6iktUk/MXWP6l22slOprBmR3ipweN7lKG8npkefPdQTItpAQ==
+  dependencies:
+    "@rocketsoftware/icon-helpers" "^0.3.0"
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
@@ -4909,16 +4919,6 @@ capture-exit@^2.0.0:
   integrity sha512-PiT/hQmTonHhl/HFGN+Lx3JJUznrVYJ3+AQsnthneZbvW7x+f08Tk7yLJTLEOUvBTbduLeeBkxEaYXUOUrRq6g==
   dependencies:
     rsvp "^4.8.4"
-
-carbon-components@10.9.0:
-  version "10.9.0"
-  resolved "https://registry.yarnpkg.com/carbon-components/-/carbon-components-10.9.0.tgz#b96f097582301b009232ebc54927327ee3608a84"
-  integrity sha512-r0fHHGV1nAGazL42ecsFSBHlrRlg/2d1XAvnlnRzOvZW8O+DFR4XxpAgf5ZWKFCiiysS5eDympZTqTflN/NewQ==
-  dependencies:
-    carbon-icons "^7.0.7"
-    flatpickr "4.6.1"
-    lodash.debounce "^4.0.8"
-    warning "^3.0.0"
 
 carbon-icons@^7.0.7:
   version "7.0.7"

@@ -1,4 +1,4 @@
-import { settings as carbonSettings } from 'carbon-components';
+import { settings as carbonSettings } from '@rocketsoftware/carbon-components';
 
 export default {
   created() {

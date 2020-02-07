@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@ascendancyy/vue-cli-plugin-stylelint": "^1.1.2",
-    "@carbon/icons-vue": "10.8.0",
+    "@rocketsoftware/icons-vue": "0.3.0",
     "@commitlint/cli": "^7.6.1",
     "@commitlint/config-conventional": "^7.6.0",
     "@storybook/addon-actions": "^5.2.1",
@@ -46,7 +46,7 @@
     "@vue/eslint-config-prettier": "^4.0.1",
     "@vue/test-utils": "^1.0.0-beta.29",
     "babel-eslint": "^10.0.3",
-    "carbon-components": "10.9.0",
+    "@rocketsoftware/carbon-components": "0.3.0",
     "eslint": "^5.16.0",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^5.2.3",
@@ -136,7 +136,7 @@
       "^.+\\.jsx?$": "babel-jest"
     },
     "transformIgnorePatterns": [
-      "/<rootDir>/packages/core/node_modules/@carbon/icons-vue/"
+      "/<rootDir>/packages/core/node_modules/@rocketsoftware/icons-vue/"
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/packages/core/src/$1"
